@@ -12,12 +12,12 @@ import rl "vendor:raylib"
 
 main :: proc() { 
 
-for i := 1 {
+    for i := 1 {
 
-    l.InitWindow(800, 600, "TEST")
+        l.InitWindow(800, 600, "TEST")
 
 
-    }
+                }
 
 
 }
