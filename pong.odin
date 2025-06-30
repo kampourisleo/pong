@@ -10,7 +10,7 @@ import rl "vendor:raylib"
 
 main :: proc() { 
 
-rl.InitWindow()
+rl.InitWindow(800,600)
 
 
 }
