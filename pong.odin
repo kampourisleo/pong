@@ -14,7 +14,7 @@ main :: proc() {
 
     for i := 0; i<1; {
 
-        l.InitWindow(800, 600, "TEST")
+        rl.InitWindow(800, 600, "TEST")
 
 
                 }
