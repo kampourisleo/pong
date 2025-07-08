@@ -17,10 +17,12 @@ Entity_Rectangle :: struct {
         color : rayl.Color,
 }
 Entity_Ball :: struct { 
-        radius : i32, 
-        center_pos : i32,
+        radius : f32, 
+        center_x : i32,
+        center_y : i32,
         velocity_x : i32, // value: 1 or -1
-        velocity_y : i32, // value: 1 or -1
+        velocity_y : i32, // value: 1 or -1 
+        color : rayl.Color
 }
 //------------------------------------------
 main :: proc() { 
@@ -36,6 +38,14 @@ main :: proc() {
         Rectangle.height = screenH/60
         Rectangle.color = RED
         pos : i32 = 500 //{values from 0 to (screenW-Rectangle.width)}
+        //BALL DEFINITION 
+        Ball : Entity_Ball
+        Ball.radius = 10.0
+        Ball.center_x = 200 
+        Ball.center_y = 200 
+        Ball.color = SKYBLUE
+        Ball.velocity_x = 1
+        Ball.velocity_y = 1
         //RUNTIME
         for !rayl.WindowShouldClose() {
                 rayl.BeginDrawing()
@@ -46,10 +56,9 @@ main :: proc() {
                 if pos-Rectangle.height >= 0 {
                         if rayl.IsKeyDown(rayl.KeyboardKey.LEFT) do pos = pos-Rectangle.height
                 }
-
-
+                
                         rayl.DrawRectangle(pos, (screenH-Rectangle.height), Rectangle.width, Rectangle.height, Rectangle.color)
-
+                        rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color);  
 
 
 
