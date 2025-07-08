@@ -1,9 +1,8 @@
 package pong 
 //------------------------------------------
 import "core:fmt"
-import "core:os"
-import "core:strconv"
-import "core:strings"
+import "core:os" 
+import "core:time"
 import rayl "vendor:raylib" 
 //RAYLIB COLORS
 BLACK :: (rayl.Color){ 0, 0, 0, 255 }
@@ -29,9 +28,10 @@ main :: proc() {
         //INITIAL WINDOW SETUP
         screenH : i32 = 600 //rayl.GetScreenHeight()
         screenW : i32 = 800 //rayl.GetScreenWidth()
+        ft : f32 = 0
         rayl.SetConfigFlags({.WINDOW_RESIZABLE, .VSYNC_HINT})
         rayl.InitWindow(screenW, screenH, "PONG")
-        rayl.SetTargetFPS(60);
+        rayl.SetTargetFPS(60);                   
         //RECTANGLE DEFINITION
         Rectangle : Entity_Rectangle
         Rectangle.width = screenW/8
@@ -46,17 +46,25 @@ main :: proc() {
         Ball.color = SKYBLUE
         Ball.velocity_x = 1
         Ball.velocity_y = 1
-        //RUNTIME
+        //MAIN
         for !rayl.WindowShouldClose() {
                 rayl.BeginDrawing()
                 rayl.ClearBackground(BLACK) //BACKGROUND COLOR
+                ft = rayl.GetFrameTime(); //TIME ELAPSED BETWEEN 2 FRAMES
+                //--------------------------
+                        rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color);
+                        //MAKE DIFFICULTIES +4,5,6
+                        Ball.center_x = Ball.center_x + 6
+                        Ball.center_y = Ball.center_y + 6 
+                //-------------------------
+
+
                 if pos+Rectangle.height <= screenW-Rectangle.width {
                         if rayl.IsKeyDown(rayl.KeyboardKey.RIGHT) do pos = pos+Rectangle.height
                 }
                 if pos-Rectangle.height >= 0 {
                         if rayl.IsKeyDown(rayl.KeyboardKey.LEFT) do pos = pos-Rectangle.height
                 }
-                
                         rayl.DrawRectangle(pos, (screenH-Rectangle.height), Rectangle.width, Rectangle.height, Rectangle.color)
                         rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color);  
 
