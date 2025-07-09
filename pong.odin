@@ -2,7 +2,7 @@ package pong
 //------------------------------------------
 import "core:fmt"
 import "core:os" 
-import "core:time"
+import "core:math"
 import rayl "vendor:raylib" 
 //RAYLIB COLORS
 BLACK :: (rayl.Color){ 0, 0, 0, 255 }
@@ -24,11 +24,32 @@ Entity_Ball :: struct {
         color : rayl.Color
 }
 //------------------------------------------
+//POLAR-TO-CARTESIAN FOR LCS:
+polar2cart :: proc(radius : f32, theta : f32) -> (f32, f32){
+        x : f32 = radius * math.cos_f32(theta)
+        y : f32 = radius * math.sin_f32(theta) 
+        return x, y
+}
+//LCS to GCS TRANSFORM WITHOUT ROTATIONS: 
+lcs2gcs :: proc(center_x : i32 , center_y : i32, x_lcs : f32, 
+                                        y_lcs : f32 ) -> (f32,f32){
+        x_gcs : f32 = f32(center_x) + x_lcs
+        y_gcs : f32 = f32(center_y) + y_lcs 
+        return x_gcs, y_gcs
+}
+circle_boundary :: proc(radius : f32, center_x : i32, center_y : i32) {
+        for i := 0; i < 10; i += 1 {
+
+        }
+
+}
+
 main :: proc() { 
         //INITIAL WINDOW SETUP
         screenH : i32 = 600 //rayl.GetScreenHeight()
         screenW : i32 = 800 //rayl.GetScreenWidth()
         ft : f32 = 0
+        boundary_ball: matrix[1, 10]f32 //to be used for collision detection
         rayl.SetConfigFlags({.WINDOW_RESIZABLE, .VSYNC_HINT})
         rayl.InitWindow(screenW, screenH, "PONG")
         rayl.SetTargetFPS(60);                   
