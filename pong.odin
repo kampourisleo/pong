@@ -24,11 +24,16 @@ Entity_Ball :: struct {
         color : rayl.Color
 }
 //------------------------------------------
-//POLAR-TO-CARTESIAN FOR LCS:
-polar2cart :: proc(radius : f32, theta : f32) -> (f32, f32){
+//POLAR-TO-CARTESIAN FOR LCS: bool True -> X, bool False -> Y
+polar2cart :: proc(radius : f32, theta : f32, returnX : bool) -> (f32){
         x : f32 = radius * math.cos_f32(theta)
         y : f32 = radius * math.sin_f32(theta) 
-        return x, y
+        if returnX {
+                return x
+        }
+        else {
+                return y
+        }
 }
 //LCS to GCS TRANSFORM WITHOUT ROTATIONS: 
 lcs2gcs :: proc(center_x : i32 , center_y : i32, x_lcs : f32, 
@@ -37,19 +42,23 @@ lcs2gcs :: proc(center_x : i32 , center_y : i32, x_lcs : f32,
         y_gcs : f32 = f32(center_y) + y_lcs 
         return x_gcs, y_gcs
 }
-circle_boundary :: proc(radius : f32, center_x : i32, center_y : i32) {
-        for i := 0; i < 10; i += 1 {
+circle_boundary :: proc(radius : f32, center_x : i32, 
+                center_y : i32) ->(matrix[2,8]f32) {
+        boundary_ball : matrix[2, 8] f32 //for every 45 degrees
+                for i := 0; i < 8; i += 1 {
+                    boundary_ball[0,i] = polar2cart(radius, f32(i*45), true) //THIS IS X
+                    boundary_ball[0,i] = boundary_ball[0,i] + f32(center_x)
+                    boundary_ball[1,i] = polar2cart(radius, f32(i*45), false) //THIS IS Y
+                    boundary_ball[1,i] = boundary_ball[1,i] + f32(center_y)
+                }     
 
-        }
-
+        return  boundary_ball
 }
-
 main :: proc() { 
         //INITIAL WINDOW SETUP
         screenH : i32 = 600 //rayl.GetScreenHeight()
         screenW : i32 = 800 //rayl.GetScreenWidth()
         ft : f32 = 0
-        boundary_ball: matrix[1, 10]f32 //to be used for collision detection
         rayl.SetConfigFlags({.WINDOW_RESIZABLE, .VSYNC_HINT})
         rayl.InitWindow(screenW, screenH, "PONG")
         rayl.SetTargetFPS(60);                   
