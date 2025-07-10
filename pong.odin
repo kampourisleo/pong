@@ -42,6 +42,7 @@ lcs2gcs :: proc(center_x : i32 , center_y : i32, x_lcs : f32,
         y_gcs : f32 = f32(center_y) + y_lcs 
         return x_gcs, y_gcs
 }
+//CIRCLE BOUNDARY CALCULATION (OCTAGON)
 circle_boundary :: proc(radius : f32, center_x : i32, 
                 center_y : i32) ->(matrix[2,8]f32) {
         boundary_ball : matrix[2, 8] f32 //for every 45 degrees
@@ -54,6 +55,16 @@ circle_boundary :: proc(radius : f32, center_x : i32,
 
         return  boundary_ball
 }
+//PADDLE - RECTANGLE BOUNDARY CALCULATION: UNDER CONSTRUCTION
+paddle_boundary :: proc(pos : i32, width : i32,
+ height : i32, ScreenHeight : i32) -> ([16]f32, i32) { 
+        Y_out := ScreenHeight - height
+        boundary_rectangle : [16]f32 //X only because Y :: ScreenHeight-height
+        for i := 0; i < 16; i += 1 {
+        boundary_rectangle[i] = f32(pos + (i32(i)*width/15))
+        }
+        return boundary_rectangle, Y_out
+ }        
 main :: proc() { 
         //INITIAL WINDOW SETUP
         screenH : i32 = 600 //rayl.GetScreenHeight()
