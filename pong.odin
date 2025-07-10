@@ -21,7 +21,8 @@ Entity_Ball :: struct {
         center_y : i32,
         velocity_x : i32, // value: 1 or -1
         velocity_y : i32, // value: 1 or -1 
-        color : rayl.Color
+        color : rayl.Color, 
+        colliders : matrix[2,8]f32 //octagon
 }
 //------------------------------------------
 //POLAR-TO-CARTESIAN FOR LCS: bool True -> X, bool False -> Y
@@ -35,7 +36,7 @@ polar2cart :: proc(radius : f32, theta : f32, returnX : bool) -> (f32){
                 return y
         }
 }
-//LCS to GCS TRANSFORM WITHOUT ROTATIONS: 
+//LCS to GCS TRANSFORM WITHOUT ROTATIONS: MODIFY FOR MATRIX INPUT!!!!!!!!!!!
 lcs2gcs :: proc(center_x : i32 , center_y : i32, x_lcs : f32, 
                                         y_lcs : f32 ) -> (f32,f32){
         x_gcs : f32 = f32(center_x) + x_lcs
@@ -57,13 +58,13 @@ circle_boundary :: proc(radius : f32, center_x : i32,
 }
 //PADDLE - RECTANGLE BOUNDARY CALCULATION: UNDER CONSTRUCTION
 paddle_boundary :: proc(pos : i32, width : i32,
- height : i32, ScreenHeight : i32) -> ([16]f32, i32) { 
-        Y_out := ScreenHeight - height
+ height : i32, ScreenHeight : i32) -> ([16]f32) { 
+        //Y_out := ScreenHeight - height
         boundary_rectangle : [16]f32 //X only because Y :: ScreenHeight-height
         for i := 0; i < 16; i += 1 {
         boundary_rectangle[i] = f32(pos + (i32(i)*width/15))
         }
-        return boundary_rectangle, Y_out
+        return boundary_rectangle
  }        
 main :: proc() { 
         //INITIAL WINDOW SETUP
@@ -85,8 +86,10 @@ main :: proc() {
         Ball.center_x = 200 
         Ball.center_y = 200 
         Ball.color = SKYBLUE
-        Ball.velocity_x = 1
-        Ball.velocity_y = 1
+        Ball.velocity_x = 1 //or -1
+        Ball.velocity_y = 1 //or -1 
+        Ball.colliders = circle_boundary(Ball.radius, Ball.center_x, Ball.center_y)
+
         //MAIN
         for !rayl.WindowShouldClose() {
                 rayl.BeginDrawing()
@@ -95,11 +98,16 @@ main :: proc() {
                 //--------------------------
                         rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color);
                         //MAKE DIFFICULTIES +4,5,6
-                        Ball.center_x = Ball.center_x + 6
-                        Ball.center_y = Ball.center_y + 6 
+                        Ball.center_x = Ball.center_x + 6*Ball.velocity_x
+                        Ball.center_y = Ball.center_y + 6*Ball.velocity_y 
                 //-------------------------
-
-
+                        //COLLISION CHECK:
+                        for i := 0; i < 8; i += 1 {
+                                for j := 0; j < 16; j += 1 {
+                                        //if condition do 
+                                }
+                        }
+                //-------------------------
                 if pos+Rectangle.height <= screenW-Rectangle.width {
                         if rayl.IsKeyDown(rayl.KeyboardKey.RIGHT) do pos = pos+Rectangle.height
                 }
