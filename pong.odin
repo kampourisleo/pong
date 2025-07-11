@@ -28,9 +28,9 @@ Entity_Ball :: struct {
 //------------------------------------------
 main :: proc() { 
         //INITIAL WINDOW SETUP
+        scoreCounter := 0
         screenH : i32 = 600 //rayl.GetScreenHeight()
         screenW : i32 = 800 //rayl.GetScreenWidth()
-        ft : f32 = 0
         rayl.SetConfigFlags({.WINDOW_RESIZABLE, .VSYNC_HINT})
         rayl.InitWindow(screenW, screenH, "PONG")
         rayl.SetTargetFPS(60);                   
@@ -52,18 +52,20 @@ main :: proc() {
                 for !rayl.WindowShouldClose() {
                 rayl.BeginDrawing()
                 rayl.ClearBackground(BLACK) //BACKGROUND COLOR
-                ft = rayl.GetFrameTime(); //TIME ELAPSED BETWEEN 2 FRAMES
                 //--------------------------
                         rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color);
                         //DIFFICULTIES +4,5,6 (change factor before velocity)
                         Ball.center_x = Ball.center_x + 6*Ball.velocity_x
                         Ball.center_y = Ball.center_y + 6*Ball.velocity_y 
                         //COLLISION CHECKS:
+                        //paddle:
                         if (Ball.center_x <= pos+Rectangle.width) && (Ball.center_y+i32(Ball.radius) == screenH) && (Ball.center_x >= pos)  {
                                 Ball.velocity_y = -1  
+                                scoreCounter += 1 //increase score for every bounce
                                 if rayl.IsKeyDown(rayl.KeyboardKey.RIGHT) do Ball.velocity_x = 1
                                 if rayl.IsKeyDown(rayl.KeyboardKey.LEFT) do Ball.velocity_x = -1
                         }
+                        //walls:
                         if (Ball.center_x < i32(Ball.radius)) do Ball.velocity_x = 1 
                         if (Ball.center_x > i32(screenW-i32(Ball.radius))) do Ball.velocity_x = -1 
                         if (i32(Ball.center_y-i32(Ball.radius)) < 0) do Ball.velocity_y = 1
@@ -74,6 +76,7 @@ main :: proc() {
                         if pos-Rectangle.height >= 0 {
                                 if rayl.IsKeyDown(rayl.KeyboardKey.LEFT) do pos = pos-Rectangle.height
                         }
+                        //Drawing:
                                 rayl.DrawRectangle(pos, (screenH-Rectangle.height), Rectangle.width, Rectangle.height, Rectangle.color)
                                 rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color);  
                         rayl.EndDrawing()
