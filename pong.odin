@@ -3,18 +3,20 @@ package pong
 import "core:fmt"
 import "core:os" 
 import "core:math"
+import "core:strconv"
+import "core:strings"
 import rayl "vendor:raylib" 
 //RAYLIB COLORS
 BLACK :: (rayl.Color){ 0, 0, 0, 255 }
 WHITE :: (rayl.Color){ 255, 255, 255, 255 } 
 SKYBLUE :: (rayl.Color){ 102, 191, 255, 255 } 
-RED :: (rayl.Color){ 230, 41, 55, 255 }
+RED :: (rayl.Color){ 230, 41, 55, 255 }  
+PINK :: (rayl.Color){ 255, 109, 194, 255 }
 //------------------------------------------
 Entity_Rectangle :: struct {
         width : i32,
         height : i32,
-        color : rayl.Color,
-        colliders : [16]f32
+        color : rayl.Color
 }
 Entity_Ball :: struct { 
         radius : f32, 
@@ -22,8 +24,7 @@ Entity_Ball :: struct {
         center_y : i32,
         velocity_x : i32, // value: 1 or -1
         velocity_y : i32, // value: 1 or -1 
-        color : rayl.Color, 
-        colliders : matrix[2,8]f32 //octagon
+        color : rayl.Color 
 }
 //------------------------------------------
 main :: proc() { 
@@ -76,13 +77,18 @@ main :: proc() {
                         if pos-Rectangle.height >= 0 {
                                 if rayl.IsKeyDown(rayl.KeyboardKey.LEFT) do pos = pos-Rectangle.height
                         }
-                        //Drawing:
+                        //Drawing Ball and Paddle:
                                 rayl.DrawRectangle(pos, (screenH-Rectangle.height), Rectangle.width, Rectangle.height, Rectangle.color)
-                                rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color);  
+                                rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color); 
+                        //Show Score counter: 
+                                buf: [8]byte
+                                strconv.itoa(buf[:],scoreCounter)
+                                score := strings.clone_to_cstring(strings.concatenate({"SCORE:", string(buf[:])})) 
                         //Losing: 
                         if (i32(Ball.center_y-i32(Ball.radius)) > screenH) {
-                                rayl.DrawText("YOU LOSE.", i32(screenW/3), i32(screenH/6), 50, WHITE);
+                                rayl.DrawText("YOU LOSE.", i32(screenW/3), i32(screenH/6), 50, RED);
                         }
-                        rayl.EndDrawing()
+                        rayl.DrawText(score, 10, 10, 18, PINK);
+                        rayl.EndDrawing() 
                 }
 }
