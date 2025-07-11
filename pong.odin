@@ -31,7 +31,7 @@ Entity_Ball :: struct {
 main :: proc() { 
         //INITIAL WINDOW SETUP
         scoreCounter := 0 
-        livesCounter := 3 //inital lives
+        livesCounter := 2 //inital lives
         screenH : i32 = 600 //rayl.GetScreenHeight()
         screenW : i32 = 800 //rayl.GetScreenWidth()
         rayl.SetConfigFlags({.WINDOW_RESIZABLE, .VSYNC_HINT})
