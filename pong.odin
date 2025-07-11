@@ -29,7 +29,8 @@ Entity_Ball :: struct {
 //------------------------------------------
 main :: proc() { 
         //INITIAL WINDOW SETUP
-        scoreCounter := 0
+        scoreCounter := 0 
+        livesCounter := 3 //inital lives
         screenH : i32 = 600 //rayl.GetScreenHeight()
         screenW : i32 = 800 //rayl.GetScreenWidth()
         rayl.SetConfigFlags({.WINDOW_RESIZABLE, .VSYNC_HINT})
@@ -54,6 +55,14 @@ main :: proc() {
                 rayl.BeginDrawing()
                 rayl.ClearBackground(BLACK) //BACKGROUND COLOR
                 //--------------------------
+                        //Losing Check: 
+                        if livesCounter == 0 {
+                                rayl.DrawText("YOU LOSE.", i32(screenW/3), i32(screenH/6), 50, RED);
+                                Ball.center_x = 20000
+                                Ball.center_y = 20000 
+                                Ball.velocity_x = 0
+                                Ball.velocity_y = 0
+                        }
                         rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color);
                         //DIFFICULTIES +4,5,6 (change factor before velocity)
                         Ball.center_x = Ball.center_x + 6*Ball.velocity_x
@@ -80,15 +89,25 @@ main :: proc() {
                         //Drawing Ball and Paddle:
                                 rayl.DrawRectangle(pos, (screenH-Rectangle.height), Rectangle.width, Rectangle.height, Rectangle.color)
                                 rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color); 
+                        //Show Lives counter: 
+                                buf1 : [8]byte
+                                strconv.itoa(buf1[:],livesCounter) 
+                                lives := strings.clone_to_cstring(strings.concatenate({"LIVES:", string(buf1[:])}))
+                                rayl.DrawText(lives, screenW-(screenW/10), 10, 18, WHITE)
                         //Show Score counter: 
                                 buf: [8]byte
                                 strconv.itoa(buf[:],scoreCounter)
                                 score := strings.clone_to_cstring(strings.concatenate({"SCORE:", string(buf[:])})) 
-                        //Losing: 
-                        if (i32(Ball.center_y-i32(Ball.radius)) > screenH) {
-                                rayl.DrawText("YOU LOSE.", i32(screenW/3), i32(screenH/6), 50, RED);
+                                rayl.DrawText(score, 10, 10, 18, PINK); 
+                        //Respawn:
+                        if (i32(Ball.center_y-i32(Ball.radius)) > screenH) && (livesCounter != 0) {
+                                Ball.center_x = 200 
+                                Ball.center_y = 200 
+                                Ball.velocity_x = 1
+                                Ball.velocity_y = 1
+                                livesCounter = livesCounter - 1
                         }
-                        rayl.DrawText(score, 10, 10, 18, PINK);
+                        
                         rayl.EndDrawing() 
                 }
 }
