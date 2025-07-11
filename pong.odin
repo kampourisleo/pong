@@ -32,8 +32,8 @@ main :: proc() {
         scoreCounter := 0 
         livesCounter := 2 //inital lives 
         giveExtra := 0 //used to give extra life every 20 touches
-        screenH : i32 = 600 //rayl.GetScreenHeight()
-        screenW : i32 = 800 //rayl.GetScreenWidth()
+        screenH : i32 = 600 //rayl.GetScreenHeight() 720?
+        screenW : i32 = 800 //rayl.GetScreenWidth() 960?
         rayl.SetConfigFlags({.WINDOW_RESIZABLE, .VSYNC_HINT})
         rayl.InitWindow(screenW, screenH, "PONG by Leo")
         rayl.SetTargetFPS(60);                   
@@ -86,7 +86,7 @@ main :: proc() {
                         if (Ball.center_x > i32(screenW-i32(Ball.radius))) do Ball.velocity_x = -1 
                         if (i32(Ball.center_y-i32(Ball.radius)) < 0) do Ball.velocity_y = 1
                         //MOVEMENT:
-                        if pos+Rectangle.height <= screenW-Rectangle.width {
+                        if pos <= screenW-Rectangle.width {
                                 if rayl.IsKeyDown(rayl.KeyboardKey.RIGHT) do pos = pos+Rectangle.height
                         }
                         if pos-Rectangle.height >= 0 {
