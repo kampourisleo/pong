@@ -35,7 +35,7 @@ main :: proc() {
         screenH : i32 = 600 //rayl.GetScreenHeight()
         screenW : i32 = 800 //rayl.GetScreenWidth()
         rayl.SetConfigFlags({.WINDOW_RESIZABLE, .VSYNC_HINT})
-        rayl.InitWindow(screenW, screenH, "PONG")
+        rayl.InitWindow(screenW, screenH, "PONG by Leo")
         rayl.SetTargetFPS(60);                   
         //RECTANGLE DEFINITION
         Rectangle : Entity_Rectangle
