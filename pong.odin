@@ -1,19 +1,18 @@
 package pong 
-//------------------------------------------
 import "core:fmt"
 import "core:os" 
 import "core:math"
 import "core:strconv"
 import "core:strings"
 import rayl "vendor:raylib" 
-//RAYLIB COLORS
+//RAYLIB COLORS:
 BLACK :: (rayl.Color){ 0, 0, 0, 255 }
 WHITE :: (rayl.Color){ 255, 255, 255, 255 } 
 SKYBLUE :: (rayl.Color){ 102, 191, 255, 255 } 
 RED :: (rayl.Color){ 230, 41, 55, 255 }  
 PINK :: (rayl.Color){ 255, 109, 194, 255 } 
 YELLOW :: (rayl.Color){ 253, 249, 0, 255 }
-//------------------------------------------
+//STRUCTS FOR ENTITIES:
 Entity_Rectangle :: struct {
         width : i32,
         height : i32,
@@ -27,11 +26,12 @@ Entity_Ball :: struct {
         velocity_y : i32, // value: 1 or -1 
         color : rayl.Color 
 }
-//------------------------------------------
+//MAIN:
 main :: proc() { 
         //INITIAL WINDOW SETUP
         scoreCounter := 0 
-        livesCounter := 2 //inital lives
+        livesCounter := 2 //inital lives 
+        giveExtra := 0 //used to give extra life every 20 touches
         screenH : i32 = 600 //rayl.GetScreenHeight()
         screenW : i32 = 800 //rayl.GetScreenWidth()
         rayl.SetConfigFlags({.WINDOW_RESIZABLE, .VSYNC_HINT})
@@ -51,7 +51,7 @@ main :: proc() {
         Ball.color = SKYBLUE
         Ball.velocity_x = 1 //or -1
         Ball.velocity_y = 1 //or -1 
-                //MAIN
+                //WHILE WINDOW:
                 for !rayl.WindowShouldClose() {
                 rayl.BeginDrawing()
                 rayl.ClearBackground(BLACK) //BACKGROUND COLOR
@@ -69,14 +69,19 @@ main :: proc() {
                         Ball.center_x = Ball.center_x + 6*Ball.velocity_x
                         Ball.center_y = Ball.center_y + 6*Ball.velocity_y 
                         //COLLISION CHECKS:
-                        //paddle:
+                        //for the paddle: (adds score)
                         if (Ball.center_x <= pos+Rectangle.width) && (Ball.center_y+i32(Ball.radius) == screenH) && (Ball.center_x >= pos)  {
                                 Ball.velocity_y = -1  
-                                scoreCounter += 1 //increase score for every bounce
+                                scoreCounter += 1
+                                giveExtra += 1
+                                if giveExtra == 20 {    //change number here for frequency of given lives
+                                        livesCounter += 1
+                                        giveExtra = 0
+                                }
                                 if rayl.IsKeyDown(rayl.KeyboardKey.RIGHT) do Ball.velocity_x = 1
                                 if rayl.IsKeyDown(rayl.KeyboardKey.LEFT) do Ball.velocity_x = -1
                         }
-                        //walls:
+                        //for the walls:
                         if (Ball.center_x < i32(Ball.radius)) do Ball.velocity_x = 1 
                         if (Ball.center_x > i32(screenW-i32(Ball.radius))) do Ball.velocity_x = -1 
                         if (i32(Ball.center_y-i32(Ball.radius)) < 0) do Ball.velocity_y = 1
@@ -93,12 +98,12 @@ main :: proc() {
                         //Show Lives counter: 
                                 buf1 : [8]byte
                                 strconv.itoa(buf1[:],livesCounter) 
-                                lives := strings.clone_to_cstring(strings.concatenate({"LIVES:", string(buf1[:])}))
+                                lives := strings.clone_to_cstring(strings.concatenate({"LIVES: ", string(buf1[:])}))
                                 rayl.DrawText(lives, screenW-(screenW/10), 10, 18, WHITE)
                         //Show Score counter: 
                                 buf: [8]byte
                                 strconv.itoa(buf[:],scoreCounter)
-                                score := strings.clone_to_cstring(strings.concatenate({"SCORE:", string(buf[:])})) 
+                                score := strings.clone_to_cstring(strings.concatenate({"SCORE: ", string(buf[:])})) 
                                 rayl.DrawText(score, 10, 10, 18, PINK); 
                         //Respawn:
                         if (i32(Ball.center_y-i32(Ball.radius)) > screenH) && (livesCounter != 0) {
@@ -109,5 +114,5 @@ main :: proc() {
                                 livesCounter = livesCounter - 1
                         }
                         rayl.EndDrawing() 
-                }
+                } 
 }
