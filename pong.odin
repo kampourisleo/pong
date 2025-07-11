@@ -79,6 +79,10 @@ main :: proc() {
                         //Drawing:
                                 rayl.DrawRectangle(pos, (screenH-Rectangle.height), Rectangle.width, Rectangle.height, Rectangle.color)
                                 rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color);  
+                        //Losing: 
+                        if (i32(Ball.center_y-i32(Ball.radius)) > screenH) {
+                                rayl.DrawText("YOU LOSE.", i32(screenW/3), i32(screenH/6), 50, WHITE);
+                        }
                         rayl.EndDrawing()
                 }
 }
