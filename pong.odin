@@ -69,7 +69,7 @@ main :: proc() {
                         Ball.center_x = Ball.center_x + 6*Ball.velocity_x
                         Ball.center_y = Ball.center_y + 6*Ball.velocity_y 
                         //COLLISION CHECKS:
-                        //for the paddle: (adds score)
+                        //for the paddle - upper: (adds score)
                         if (Ball.center_x <= pos+Rectangle.width) && (Ball.center_y+i32(Ball.radius) == screenH) && (Ball.center_x >= pos)  {
                                 Ball.velocity_y = -1  
                                 scoreCounter += 1
@@ -80,7 +80,7 @@ main :: proc() {
                                 }
                                 if rayl.IsKeyDown(rayl.KeyboardKey.RIGHT) do Ball.velocity_x = 1
                                 if rayl.IsKeyDown(rayl.KeyboardKey.LEFT) do Ball.velocity_x = -1
-                        }
+                        } 
                         //for the walls:
                         if (Ball.center_x < i32(Ball.radius)) do Ball.velocity_x = 1 
                         if (Ball.center_x > i32(screenW-i32(Ball.radius))) do Ball.velocity_x = -1 
