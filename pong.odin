@@ -65,7 +65,7 @@ main :: proc() {
                                 Ball.velocity_y = 0
                         }
                         rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color);
-                        //DIFFICULTIES +4,5,6 (change factor before velocity)
+                        //BALL SPEED:
                         Ball.center_x = Ball.center_x + 6*Ball.velocity_x
                         Ball.center_y = Ball.center_y + 6*Ball.velocity_y 
                         //COLLISION CHECKS:
@@ -79,7 +79,7 @@ main :: proc() {
                                         giveExtra = 0
                                 }
                                 if rayl.IsKeyDown(rayl.KeyboardKey.RIGHT) && Ball.velocity_x == 1 do Ball.velocity_x = 2*Ball.velocity_x
-                                if rayl.IsKeyDown(rayl.KeyboardKey.LEFT) && Ball.velocity_x == -1 do Ball.velocity_x = -2*Ball.velocity_x
+                                if rayl.IsKeyDown(rayl.KeyboardKey.LEFT) && Ball.velocity_x == -1 do Ball.velocity_x = 2*Ball.velocity_x
                         } 
                         //for the walls:
                         if (Ball.center_x < i32(Ball.radius)) do Ball.velocity_x = 1 
