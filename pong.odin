@@ -78,8 +78,8 @@ main :: proc() {
                                         livesCounter += 1
                                         giveExtra = 0
                                 }
-                                if rayl.IsKeyDown(rayl.KeyboardKey.RIGHT) do Ball.velocity_x = 1
-                                if rayl.IsKeyDown(rayl.KeyboardKey.LEFT) do Ball.velocity_x = -1
+                                if rayl.IsKeyDown(rayl.KeyboardKey.RIGHT) && Ball.velocity_x == 1 do Ball.velocity_x = 2*Ball.velocity_x
+                                if rayl.IsKeyDown(rayl.KeyboardKey.LEFT) && Ball.velocity_x == -1 do Ball.velocity_x = -2*Ball.velocity_x
                         } 
                         //for the walls:
                         if (Ball.center_x < i32(Ball.radius)) do Ball.velocity_x = 1 
