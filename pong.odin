@@ -11,7 +11,8 @@ BLACK :: (rayl.Color){ 0, 0, 0, 255 }
 WHITE :: (rayl.Color){ 255, 255, 255, 255 } 
 SKYBLUE :: (rayl.Color){ 102, 191, 255, 255 } 
 RED :: (rayl.Color){ 230, 41, 55, 255 }  
-PINK :: (rayl.Color){ 255, 109, 194, 255 }
+PINK :: (rayl.Color){ 255, 109, 194, 255 } 
+YELLOW :: (rayl.Color){ 253, 249, 0, 255 }
 //------------------------------------------
 Entity_Rectangle :: struct {
         width : i32,
@@ -40,7 +41,7 @@ main :: proc() {
         Rectangle : Entity_Rectangle
         Rectangle.width = screenW/6
         Rectangle.height = screenH/60
-        Rectangle.color = RED
+        Rectangle.color = YELLOW
         pos : i32 = 500 //{values from 0 to (screenW-Rectangle.width)} 
         //BALL DEFINITION 
         Ball : Entity_Ball
@@ -107,7 +108,6 @@ main :: proc() {
                                 Ball.velocity_y = 1
                                 livesCounter = livesCounter - 1
                         }
-                        
                         rayl.EndDrawing() 
                 }
 }
