@@ -74,7 +74,7 @@ main :: proc() {
                                 Ball.velocity_y = -1  
                                 scoreCounter += 1
                                 giveExtra += 1
-                                if giveExtra == 20 {    //change number here for frequency of given lives
+                                if giveExtra == 10 {    //change number here for frequency of given lives
                                         livesCounter += 1
                                         giveExtra = 0
                                 }
