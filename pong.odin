@@ -31,7 +31,8 @@ main :: proc() {
         //INITIAL WINDOW SETUP
         scoreCounter := 0 
         livesCounter := 2 //inital lives 
-        giveExtra := 0 //used to give extra life every 20 touches
+        giveExtra := 0 //used to give extra life after some touches 
+        difficulty : i32 = 8 //affects ball speed => higher = faster
         screenH : i32 = 600 //rayl.GetScreenHeight() 720?
         screenW : i32 = 800 //rayl.GetScreenWidth() 960?
         rayl.SetConfigFlags({.WINDOW_RESIZABLE, .VSYNC_HINT})
@@ -41,16 +42,17 @@ main :: proc() {
         Rectangle : Entity_Rectangle
         Rectangle.width = screenW/6
         Rectangle.height = screenH/60
-        Rectangle.color = YELLOW
-        pos : i32 = 500 //{values from 0 to (screenW-Rectangle.width)} 
+        Rectangle.color = YELLOW 
         //BALL DEFINITION 
         Ball : Entity_Ball
         Ball.radius = 10.0
         Ball.center_x = 200 
-        Ball.center_y = 200 
+        Ball.center_y = 200
         Ball.color = SKYBLUE
         Ball.velocity_x = 1 //or -1
         Ball.velocity_y = 1 //or -1 
+        //INITIAL BALL POSITION 
+        pos : i32 = 500 //INITIAL POSITION: {values from 0 to (screenW-Rectangle.width)}
                 //WHILE WINDOW:
                 for !rayl.WindowShouldClose() {
                 rayl.BeginDrawing()
@@ -66,15 +68,15 @@ main :: proc() {
                         }
                         rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color);
                         //BALL SPEED:
-                        Ball.center_x = Ball.center_x + 6*Ball.velocity_x
-                        Ball.center_y = Ball.center_y + 6*Ball.velocity_y 
+                        Ball.center_x = Ball.center_x + difficulty*Ball.velocity_x
+                        Ball.center_y = Ball.center_y + difficulty*Ball.velocity_y 
                         //COLLISION CHECKS:
                         //for the paddle - upper: (adds score)
-                        if (Ball.center_x <= pos+Rectangle.width) && (Ball.center_y+i32(Ball.radius) == screenH) && (Ball.center_x >= pos)  {
+                        if (Ball.center_x <= pos+Rectangle.width) && (Ball.center_y+i32(Ball.radius) >= screenH-Rectangle.height) && (Ball.center_x >= pos)  {
                                 Ball.velocity_y = -1  
                                 scoreCounter += 1
                                 giveExtra += 1
-                                if giveExtra == 10 {    //change number here for frequency of given lives
+                                if giveExtra == 5 {    //change number here for frequency of given lives
                                         livesCounter += 1
                                         giveExtra = 0
                                 }
@@ -107,8 +109,8 @@ main :: proc() {
                                 rayl.DrawText(score, 10, 10, 18, PINK); 
                         //Respawn:
                         if (i32(Ball.center_y-i32(Ball.radius)) > screenH) && (livesCounter != 0) {
-                                Ball.center_x = 200 
-                                Ball.center_y = 200 
+                                Ball.center_x = rayl.GetRandomValue(i32(Ball.radius), screenW-i32(Ball.radius))
+                                Ball.center_y = 100 
                                 Ball.velocity_x = 1
                                 Ball.velocity_y = 1
                                 livesCounter = livesCounter - 1
