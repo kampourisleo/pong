@@ -56,9 +56,9 @@ main :: proc() {
         Ball.color = SKYBLUE
         Ball.velocity_x = 1 //or -1
         Ball.velocity_y = 1 //or -1 
-        //RESTART BUTTON: 
+        //RESTART BUTTON DEFINITION 
         restart_width := 2*Rectangle.width
-        restart_height := 5*Rectangle.height
+        restart_height := 5*Rectangle.height 
         //INITIAL BALL POSITION 
         pos : i32 = 500 //INITIAL POSITION: {values from 0 to (screenW-Rectangle.width)}
                 //WHILE WINDOW:
@@ -66,14 +66,24 @@ main :: proc() {
                 rayl.BeginDrawing()
                 rayl.ClearBackground(BLACK) //BACKGROUND COLOR
                 //--------------------------
-                        //Losing Check: 
+                        //Losing Check:  
+                        mouse_x := rayl.GetMouseX() 
+                        mouse_y := rayl.GetMouseY()
                         if livesCounter == 0 {
                                 rayl.DrawText("GAME OVER.", i32((screenW/3)-(screenW/7)), i32(screenH/3), (screenW/10), RED);
                                 Ball.center_x = 20000
                                 Ball.center_y = 20000 
                                 Ball.velocity_x = 0
                                 Ball.velocity_y = 0
+                                //Restart Game Button:
                                 restart_game(screenW, Rectangle.height, restart_width, restart_height, SKYBLUE)
+                                if (mouse_x <= (screenW/2 + Rectangle.width)) && 
+                                (rayl.IsMouseButtonPressed(rayl.MouseButton.LEFT)) &&
+                                 (mouse_x >= (screenW/2 - Rectangle.width)) && 
+                                 (mouse_y >= Rectangle.height + restart_height) && (mouse_y <= 2 * restart_height) {
+                                        livesCounter = 4
+                                } 
+                                rayl.DrawText("TRY AGAIN.", screenW/2 - restart_width/3, restart_height+Rectangle.height, 30, BLACK); 
                         }
                         rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color);
                         //BALL SPEED:
