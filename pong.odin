@@ -11,7 +11,8 @@ WHITE :: (rayl.Color){ 255, 255, 255, 255 }
 SKYBLUE :: (rayl.Color){ 102, 191, 255, 255 } 
 RED :: (rayl.Color){ 230, 41, 55, 255 }  
 PINK :: (rayl.Color){ 255, 109, 194, 255 } 
-YELLOW :: (rayl.Color){ 253, 249, 0, 255 }
+YELLOW :: (rayl.Color){ 253, 249, 0, 255 } 
+RAYWHITE :: (rayl.Color){ 245, 245, 245, 255 }
 //STRUCTS FOR ENTITIES:
 Entity_Rectangle :: struct {
         width : i32,
@@ -26,15 +27,19 @@ Entity_Ball :: struct {
         velocity_y : i32, // value: 1 or -1 
         color : rayl.Color 
 }
+restart_game :: proc(screen_width : i32, screen_height : i32, width : i32, 
+height : i32, color : rayl.Color) { 
+        rayl.DrawRectangle(((screen_width/2)-(width/2)), (height), width, height, color)
+}
 //MAIN:
 main :: proc() { 
         //INITIAL WINDOW SETUP
         scoreCounter := 0 
-        livesCounter := 2 //inital lives 
+        livesCounter := 3 //inital lives 
         giveExtra := 0 //used to give extra life after some touches 
         difficulty : i32 = 8 //affects ball speed => higher = faster
-        screenH : i32 = 600 //rayl.GetScreenHeight() 720?
-        screenW : i32 = 800 //rayl.GetScreenWidth() 960?
+        screenH : i32 = 600 //rayl.GetScreenHeight() 600 480
+        screenW : i32 = 800 //rayl.GetScreenWidth() 800 640
         rayl.SetConfigFlags({.WINDOW_RESIZABLE, .VSYNC_HINT})
         rayl.InitWindow(screenW, screenH, "PONG by Leo")
         rayl.SetTargetFPS(60);                   
@@ -51,6 +56,9 @@ main :: proc() {
         Ball.color = SKYBLUE
         Ball.velocity_x = 1 //or -1
         Ball.velocity_y = 1 //or -1 
+        //RESTART BUTTON: 
+        restart_width := 2*Rectangle.width
+        restart_height := 5*Rectangle.height
         //INITIAL BALL POSITION 
         pos : i32 = 500 //INITIAL POSITION: {values from 0 to (screenW-Rectangle.width)}
                 //WHILE WINDOW:
@@ -60,11 +68,12 @@ main :: proc() {
                 //--------------------------
                         //Losing Check: 
                         if livesCounter == 0 {
-                                rayl.DrawText("YOU LOSE.", i32(screenW/3), i32(screenH/6), 50, RED);
+                                rayl.DrawText("GAME OVER.", i32((screenW/3)-(screenW/7)), i32(screenH/3), (screenW/10), RED);
                                 Ball.center_x = 20000
                                 Ball.center_y = 20000 
                                 Ball.velocity_x = 0
                                 Ball.velocity_y = 0
+                                restart_game(screenW, Rectangle.height, restart_width, restart_height, SKYBLUE)
                         }
                         rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color);
                         //BALL SPEED:
@@ -89,10 +98,10 @@ main :: proc() {
                         if (i32(Ball.center_y-i32(Ball.radius)) < 0) do Ball.velocity_y = 1
                         //MOVEMENT:
                         if pos <= screenW-Rectangle.width {
-                                if rayl.IsKeyDown(rayl.KeyboardKey.RIGHT) do pos = pos+Rectangle.height
+                                if rayl.IsKeyDown(rayl.KeyboardKey.RIGHT) || rayl.IsKeyDown(rayl.KeyboardKey.D) do pos = pos+Rectangle.height
                         }
                         if pos-Rectangle.height >= 0 {
-                                if rayl.IsKeyDown(rayl.KeyboardKey.LEFT) do pos = pos-Rectangle.height
+                                if rayl.IsKeyDown(rayl.KeyboardKey.LEFT) || rayl.IsKeyDown(rayl.KeyboardKey.A) do pos = pos-Rectangle.height
                         }
                         //Drawing Ball and Paddle:
                                 rayl.DrawRectangle(pos, (screenH-Rectangle.height), Rectangle.width, Rectangle.height, Rectangle.color)
@@ -101,7 +110,7 @@ main :: proc() {
                                 buf1 : [8]byte
                                 strconv.itoa(buf1[:],livesCounter) 
                                 lives := strings.clone_to_cstring(strings.concatenate({"LIVES: ", string(buf1[:])}))
-                                rayl.DrawText(lives, screenW-(screenW/10), 10, 18, WHITE)
+                                rayl.DrawText(lives, screenW-(screenW/8), 10, 18, WHITE)
                         //Show Score counter: 
                                 buf: [8]byte
                                 strconv.itoa(buf[:],scoreCounter)
