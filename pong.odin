@@ -12,7 +12,8 @@ SKYBLUE :: (rayl.Color){ 102, 191, 255, 255 }
 RED :: (rayl.Color){ 230, 41, 55, 255 }  
 PINK :: (rayl.Color){ 255, 109, 194, 255 } 
 YELLOW :: (rayl.Color){ 253, 249, 0, 255 } 
-RAYWHITE :: (rayl.Color){ 245, 245, 245, 255 }
+RAYWHITE :: (rayl.Color){ 245, 245, 245, 255 } 
+WIN_SCORE :: 60 //victory score (60 is a good baseline)
 //STRUCTS FOR ENTITIES:
 Entity_Rectangle :: struct {
         width : i32,
@@ -27,6 +28,7 @@ Entity_Ball :: struct {
         velocity_y : i32, // value: 1 or -1 
         color : rayl.Color 
 }
+//RESTART GAME BUTTON:
 restart_game :: proc(screen_width : i32, screen_height : i32, width : i32, 
 height : i32, color : rayl.Color) { 
         rayl.DrawRectangle(((screen_width/2)-(width/2)), (height), width, height, color)
@@ -66,22 +68,25 @@ main :: proc() {
                 rayl.BeginDrawing()
                 rayl.ClearBackground(BLACK) //BACKGROUND COLOR
                 //--------------------------
-                        //Losing Check:  
+                        //Losing - Winning Check:  
                         mouse_x := rayl.GetMouseX() 
                         mouse_y := rayl.GetMouseY()
-                        if livesCounter == 0 {
-                                rayl.DrawText("GAME OVER.", i32((screenW/3)-(screenW/7)), i32(screenH/3), (screenW/10), RED);
+                        if (livesCounter == 0 || scoreCounter == WIN_SCORE) {
+                                if livesCounter == 0 do rayl.DrawText("GAME OVER.", i32((screenW/3)-(screenW/7)), i32(screenH/3), (screenW/10), RED);
+                                if scoreCounter == WIN_SCORE do rayl.DrawText("YOU WIN.", i32((screenW/2)-(screenW/5)), i32(screenH/3), (screenW/10), RED);
                                 Ball.center_x = 20000
                                 Ball.center_y = 20000 
                                 Ball.velocity_x = 0
                                 Ball.velocity_y = 0
+                                difficulty = 8 
                                 //Restart Game Button:
                                 restart_game(screenW, Rectangle.height, restart_width, restart_height, SKYBLUE)
-                                if (mouse_x <= (screenW/2 + Rectangle.width)) && 
+                                if ((mouse_x <= (screenW/2 + Rectangle.width)) && 
                                 (rayl.IsMouseButtonPressed(rayl.MouseButton.LEFT)) &&
                                  (mouse_x >= (screenW/2 - Rectangle.width)) && 
-                                 (mouse_y >= Rectangle.height + restart_height) && (mouse_y <= 2 * restart_height) {
-                                        livesCounter = 4
+                                 (mouse_y >= Rectangle.height + restart_height) && (mouse_y <= 2 * restart_height)) || (rayl.IsKeyPressed(rayl.KeyboardKey.ENTER)) {
+                                        livesCounter = 4 
+                                        scoreCounter = 0
                                 } 
                                 rayl.DrawText("TRY AGAIN.", screenW/2 - restart_width/3, restart_height+Rectangle.height, 30, BLACK); 
                         }
@@ -96,7 +101,8 @@ main :: proc() {
                                 scoreCounter += 1
                                 giveExtra += 1
                                 if giveExtra == 5 {    //change number here for frequency of given lives
-                                        livesCounter += 1
+                                        livesCounter += 1 
+                                        difficulty +=1
                                         giveExtra = 0
                                 }
                                 if rayl.IsKeyDown(rayl.KeyboardKey.RIGHT) && Ball.velocity_x == 1 do Ball.velocity_x = 2*Ball.velocity_x
@@ -109,9 +115,12 @@ main :: proc() {
                         //MOVEMENT:
                         if pos <= screenW-Rectangle.width {
                                 if rayl.IsKeyDown(rayl.KeyboardKey.RIGHT) || rayl.IsKeyDown(rayl.KeyboardKey.D) do pos = pos+Rectangle.height
+                                if (rayl.IsKeyDown(rayl.KeyboardKey.RIGHT) || rayl.IsKeyDown(rayl.KeyboardKey.D)) && rayl.IsKeyDown(rayl.KeyboardKey.SPACE) do pos = pos+2*Rectangle.height
                         }
                         if pos-Rectangle.height >= 0 {
-                                if rayl.IsKeyDown(rayl.KeyboardKey.LEFT) || rayl.IsKeyDown(rayl.KeyboardKey.A) do pos = pos-Rectangle.height
+                                if rayl.IsKeyDown(rayl.KeyboardKey.LEFT) || rayl.IsKeyDown(rayl.KeyboardKey.A) do pos = pos-Rectangle.height 
+                                if (rayl.IsKeyDown(rayl.KeyboardKey.LEFT) || rayl.IsKeyDown(rayl.KeyboardKey.A)) && rayl.IsKeyDown(rayl.KeyboardKey.SPACE) do pos = pos-2*Rectangle.height
+
                         }
                         //Drawing Ball and Paddle:
                                 rayl.DrawRectangle(pos, (screenH-Rectangle.height), Rectangle.width, Rectangle.height, Rectangle.color)
@@ -127,13 +136,13 @@ main :: proc() {
                                 score := strings.clone_to_cstring(strings.concatenate({"SCORE: ", string(buf[:])})) 
                                 rayl.DrawText(score, 10, 10, 18, PINK); 
                         //Respawn:
-                        if (i32(Ball.center_y-i32(Ball.radius)) > screenH) && (livesCounter != 0) {
+                        if (i32(Ball.center_y-i32(Ball.radius)) > screenH) && (livesCounter != 0) && (scoreCounter != WIN_SCORE) {
                                 Ball.center_x = rayl.GetRandomValue(i32(Ball.radius), screenW-i32(Ball.radius))
                                 Ball.center_y = 100 
                                 Ball.velocity_x = 1
                                 Ball.velocity_y = 1
                                 livesCounter = livesCounter - 1
-                        }
+                        } 
                         rayl.EndDrawing() 
                 } 
 }
