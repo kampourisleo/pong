@@ -13,6 +13,8 @@ RED :: (rayl.Color){ 230, 41, 55, 255 }
 PINK :: (rayl.Color){ 255, 109, 194, 255 } 
 YELLOW :: (rayl.Color){ 253, 249, 0, 255 } 
 RAYWHITE :: (rayl.Color){ 245, 245, 245, 255 } 
+GRAY :: (rayl.Color){ 130, 130, 130, 255 }
+DARKGRAY :: (rayl.Color){ 80, 80, 80, 255 }
 WIN_SCORE :: 60 //victory score (60 is a good baseline)
 //STRUCTS FOR ENTITIES:
 Entity_Rectangle :: struct {
@@ -41,21 +43,22 @@ main :: proc() {
         giveExtra := 0 //used to give extra life after some touches 
         difficulty : i32 = 8 //affects ball speed => higher = faster
         screenH : i32 = 600 //rayl.GetScreenHeight() 600 480
-        screenW : i32 = 800 //rayl.GetScreenWidth() 800 640
+        screenW : i32 = 800 //rayl.GetScreenWidth() 800 640 
         rayl.SetConfigFlags({.WINDOW_RESIZABLE, .VSYNC_HINT})
-        rayl.InitWindow(screenW, screenH, "PONG by Leo")
-        rayl.SetTargetFPS(60);                   
+        rayl.InitWindow(screenW, screenH, "PONG by Leo") 
+        rayl.SetTargetFPS(60);              
+        texture := rayl.LoadTexture("round_cat.png")      
         //RECTANGLE DEFINITION
         Rectangle : Entity_Rectangle
         Rectangle.width = screenW/6
         Rectangle.height = screenH/60
-        Rectangle.color = YELLOW 
+        Rectangle.color = SKYBLUE
         //BALL DEFINITION 
         Ball : Entity_Ball
         Ball.radius = 10.0
         Ball.center_x = 200 
         Ball.center_y = 200
-        Ball.color = SKYBLUE
+        Ball.color = YELLOW
         Ball.velocity_x = 1 //or -1
         Ball.velocity_y = 1 //or -1 
         //RESTART BUTTON DEFINITION 
@@ -66,14 +69,14 @@ main :: proc() {
                 //WHILE WINDOW:
                 for !rayl.WindowShouldClose() {
                 rayl.BeginDrawing()
-                rayl.ClearBackground(BLACK) //BACKGROUND COLOR
+                rayl.ClearBackground(BLACK) //BACKGROUND COLOR 
                 //--------------------------
                         //Losing - Winning Check:  
                         mouse_x := rayl.GetMouseX() 
                         mouse_y := rayl.GetMouseY()
                         if (livesCounter == 0 || scoreCounter == WIN_SCORE) {
-                                if livesCounter == 0 do rayl.DrawText("GAME OVER.", i32((screenW/3)-(screenW/7)), i32(screenH/3), (screenW/10), RED);
-                                if scoreCounter == WIN_SCORE do rayl.DrawText("YOU WIN.", i32((screenW/2)-(screenW/5)), i32(screenH/3), (screenW/10), RED);
+                                if livesCounter == 0 do rayl.DrawText("GAME OVER!", i32((screenW/3-screenW/7)), i32(screenH/3), (screenW/10), RED); 
+                                if scoreCounter == WIN_SCORE do rayl.DrawText("YOU WIN.", i32((screenW/2)-(screenW/5)), i32(screenH/3), (screenW/10), RED); 
                                 Ball.center_x = 20000
                                 Ball.center_y = 20000 
                                 Ball.velocity_x = 0
@@ -90,7 +93,6 @@ main :: proc() {
                                 } 
                                 rayl.DrawText("TRY AGAIN.", screenW/2 - restart_width/3, restart_height+Rectangle.height, 30, BLACK); 
                         }
-                        rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color);
                         //BALL SPEED:
                         Ball.center_x = Ball.center_x + difficulty*Ball.velocity_x
                         Ball.center_y = Ball.center_y + difficulty*Ball.velocity_y 
@@ -124,7 +126,8 @@ main :: proc() {
                         }
                         //Drawing Ball and Paddle:
                                 rayl.DrawRectangle(pos, (screenH-Rectangle.height), Rectangle.width, Rectangle.height, Rectangle.color)
-                                rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color); 
+                                //rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color); 
+                                rayl.DrawTexture(texture, Ball.center_x-i32(Ball.radius), Ball.center_y-i32(Ball.radius), rayl.WHITE);
                         //Show Lives counter: 
                                 buf1 : [8]byte
                                 strconv.itoa(buf1[:],livesCounter) 
@@ -134,7 +137,7 @@ main :: proc() {
                                 buf: [8]byte
                                 strconv.itoa(buf[:],scoreCounter)
                                 score := strings.clone_to_cstring(strings.concatenate({"SCORE: ", string(buf[:])})) 
-                                rayl.DrawText(score, 10, 10, 18, PINK); 
+                                rayl.DrawText(score, 10, 10, 18, PINK);
                         //Respawn:
                         if (i32(Ball.center_y-i32(Ball.radius)) > screenH) && (livesCounter != 0) && (scoreCounter != WIN_SCORE) {
                                 Ball.center_x = rayl.GetRandomValue(i32(Ball.radius), screenW-i32(Ball.radius))
