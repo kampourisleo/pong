@@ -7,8 +7,8 @@ import rayl "vendor:raylib"
 //RAYLIB COLORS:
 BLACK :: (rayl.Color){ 0, 0, 0, 255 }
 WHITE :: (rayl.Color){ 255, 255, 255, 255 } 
-SKYBLUE :: (rayl.Color){ 102, 191, 255, 255 }   
-PINK :: (rayl.Color){ 255, 109, 194, 255 } 
+SKYBLUE :: (rayl.Color){ 0, 121, 241, 255 }  
+PINK :: (rayl.Color){ 255, 40, 190, 255 }
 WIN_SCORE :: 60 //victory score (60 is a good baseline)
 //STRUCTS FOR ENTITIES:
 Entity_Rectangle :: struct {
