@@ -127,7 +127,7 @@ main :: proc() {
                         //Drawing Ball and Paddle:
                                 rayl.DrawRectangle(pos, (screenH-Rectangle.height), Rectangle.width, Rectangle.height, Rectangle.color)
                                 //rayl.DrawCircle(Ball.center_x, Ball.center_y, Ball.radius, Ball.color); 
-                                rayl.DrawTexture(texture, Ball.center_x-i32(Ball.radius), Ball.center_y-i32(Ball.radius), rayl.WHITE);
+                                rayl.DrawTexture(texture, Ball.center_x-i32(Ball.radius), Ball.center_y-i32(Ball.radius), RAYWHITE);
                         //Show Lives counter: 
                                 buf1 : [8]byte
                                 strconv.itoa(buf1[:],livesCounter) 
